@@ -1,5 +1,6 @@
 import os from 'os';
 import idleManager from '../utils/idle_manager.js';
+import logger from '../utils/logger.js';
 
 const startTime = Date.now();
 let requestCount = 0;
@@ -7,6 +8,23 @@ let requestCount = 0;
 // 今日请求统计
 let todayDate = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
 let todayRequestCount = 0;
+
+// 定期内存监控和清理 - 每30分钟检查一次内存使用
+const memoryCheckInterval = setInterval(() => {
+  const memUsage = process.memoryUsage();
+  const heapUsedMB = Math.round(memUsage.heapUsed / 1024 / 1024);
+  const heapTotalMB = Math.round(memUsage.heapTotal / 1024 / 1024);
+  
+  logger.info(`📊 内存使用: ${heapUsedMB}MB / ${heapTotalMB}MB`);
+  
+  // 如果堆内存使用超过400MB，主动触发GC
+  if (heapUsedMB > 400 && global.gc) {
+    logger.warn(`⚠️  内存使用较高 (${heapUsedMB}MB)，触发垃圾回收`);
+    global.gc();
+  }
+}, 30 * 60 * 1000); // 每30分钟
+
+memoryCheckInterval.unref(); // 不阻止进程退出
 
 // 增加请求计数
 export function incrementRequestCount() {

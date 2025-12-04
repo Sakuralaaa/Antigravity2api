@@ -135,16 +135,20 @@ export async function checkRateLimit(keyToCheck) {
   // 清理过期的使用记录
   key.usage = key.usage || {};
   const cutoffTime = now - windowMs;
-
-  // 计算当前时间窗口内的请求数
+  
+  // 创建新对象存储有效记录，避免内存碎片
+  const newUsage = {};
   let requestCount = 0;
+  
   for (const [timestamp, count] of Object.entries(key.usage)) {
     if (parseInt(timestamp) >= cutoffTime) {
       requestCount += count;
-    } else {
-      delete key.usage[timestamp]; // 清理过期记录
+      newUsage[timestamp] = count;
     }
   }
+  
+  // 替换为清理后的记录
+  key.usage = newUsage;
 
   // 检查是否超过限制
   if (requestCount >= maxRequests) {

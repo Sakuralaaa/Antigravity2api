@@ -162,6 +162,18 @@ app.post('/v1/chat/completions', async (req, res) => {
       const id = `chatcmpl-${Date.now()}`;
       const created = Math.floor(Date.now() / 1000);
       let hasToolCall = false;
+      
+      // 添加连接关闭监听，确保资源清理
+      const cleanup = () => {
+        // 连接关闭时的清理工作
+        if (global.gc && Math.random() < 0.1) {
+          // 10%概率触发GC，避免过于频繁
+          global.gc();
+        }
+      };
+      
+      req.on('close', cleanup);
+      req.on('error', cleanup);
 
       await generateAssistantResponse(requestBody, (data) => {
         if (data.type === 'tool_calls') {
@@ -276,11 +288,15 @@ server.on('error', (error) => {
   }
 });
 
-const shutdown = () => {
+const shutdown = async () => {
   logger.info('正在关闭服务器...');
 
   // 清理空闲管理器
   idleManager.destroy();
+  
+  // 清理token管理器
+  const tokenManagerModule = await import('../auth/token_manager.js');
+  tokenManagerModule.default.destroy();
 
   server.close(() => {
     logger.info('服务器已关闭');

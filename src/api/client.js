@@ -36,71 +36,76 @@ export async function generateAssistantResponse(requestBody, callback) {
   let thinkingStarted = false;
   let toolCalls = [];
 
-  while (true) {
-    const { done, value } = await reader.read();
-    if (done) break;
+  try {
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
 
-    const chunk = decoder.decode(value);
-    const lines = chunk.split('\n').filter(line => line.startsWith('data: '));
+      const chunk = decoder.decode(value, { stream: true });
+      const lines = chunk.split('\n').filter(line => line.startsWith('data: '));
 
-    for (const line of lines) {
-      const jsonStr = line.slice(6);
-      try {
-        const data = JSON.parse(jsonStr);
-        const parts = data.response?.candidates?.[0]?.content?.parts;
-        if (parts) {
-          for (const part of parts) {
-            if (part.thought === true) {
-              if (!thinkingStarted) {
-                callback({ type: 'thinking', content: '<think>\n' });
-                thinkingStarted = true;
-              }
-              callback({ type: 'thinking', content: part.text || '' });
-            } else if (part.text !== undefined) {
-              if (thinkingStarted) {
-                callback({ type: 'thinking', content: '\n</think>\n' });
-                thinkingStarted = false;
-              }
-              let content = part.text || '';
-              if (part.thought_signature) {
-                content += `\n<!-- thought_signature: ${part.thought_signature} -->`;
-              }
-
-              if (part.inlineData) {
-                const mimeType = part.inlineData.mimeType;
-                const data = part.inlineData.data;
-                content += `\n![Generated Image](data:${mimeType};base64,${data})`;
-              }
-
-              if (content) {
-                callback({ type: 'text', content: content });
-              }
-            } else if (part.functionCall) {
-              toolCalls.push({
-                id: part.functionCall.id,
-                type: 'function',
-                function: {
-                  name: part.functionCall.name,
-                  arguments: JSON.stringify(part.functionCall.args)
+      for (const line of lines) {
+        const jsonStr = line.slice(6);
+        try {
+          const data = JSON.parse(jsonStr);
+          const parts = data.response?.candidates?.[0]?.content?.parts;
+          if (parts) {
+            for (const part of parts) {
+              if (part.thought === true) {
+                if (!thinkingStarted) {
+                  callback({ type: 'thinking', content: '<think>\n' });
+                  thinkingStarted = true;
                 }
-              });
+                callback({ type: 'thinking', content: part.text || '' });
+              } else if (part.text !== undefined) {
+                if (thinkingStarted) {
+                  callback({ type: 'thinking', content: '\n</think>\n' });
+                  thinkingStarted = false;
+                }
+                let content = part.text || '';
+                if (part.thought_signature) {
+                  content += `\n<!-- thought_signature: ${part.thought_signature} -->`;
+                }
+
+                if (part.inlineData) {
+                  const mimeType = part.inlineData.mimeType;
+                  const data = part.inlineData.data;
+                  content += `\n![Generated Image](data:${mimeType};base64,${data})`;
+                }
+
+                if (content) {
+                  callback({ type: 'text', content: content });
+                }
+              } else if (part.functionCall) {
+                toolCalls.push({
+                  id: part.functionCall.id,
+                  type: 'function',
+                  function: {
+                    name: part.functionCall.name,
+                    arguments: JSON.stringify(part.functionCall.args)
+                  }
+                });
+              }
             }
           }
-        }
 
-        // 当遇到 finishReason 时，发送所有收集的工具调用
-        if (data.response?.candidates?.[0]?.finishReason && toolCalls.length > 0) {
-          if (thinkingStarted) {
-            callback({ type: 'thinking', content: '\n</think>\n' });
-            thinkingStarted = false;
+          // 当遇到 finishReason 时，发送所有收集的工具调用
+          if (data.response?.candidates?.[0]?.finishReason && toolCalls.length > 0) {
+            if (thinkingStarted) {
+              callback({ type: 'thinking', content: '\n</think>\n' });
+              thinkingStarted = false;
+            }
+            callback({ type: 'tool_calls', tool_calls: toolCalls });
+            toolCalls = [];
           }
-          callback({ type: 'tool_calls', tool_calls: toolCalls });
-          toolCalls = [];
+        } catch (e) {
+          // 忽略解析错误
         }
-      } catch (e) {
-        // 忽略解析错误
       }
     }
+  } finally {
+    // 确保reader被释放
+    reader.releaseLock();
   }
 }
 
