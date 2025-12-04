@@ -1,0 +1,22 @@
+name: Deploy to Hugging Face Spaces 🚀
+
+on:
+  push:
+    branches:
+      - main    # 监听main分支推送
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v4
+    
+    - name: Push to Hugging Face Space
+      uses: huggingface/huggingface-cli-action@v1
+      with:
+        api_token: ${{ secrets.HF_TOKEN }}
+        repo_id: your-username/your-space-name  # 替换为你的Space名称
+        repo_type: space
+        commit_message: "Auto-deploy from GitHub"
