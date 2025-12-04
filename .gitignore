@@ -1,9 +1,9 @@
 data/*.json
-/node_modules
-client/node_modules
-client/dist
-uploads
-tmp
+/node_modules/
+client/node_modules/
+client/dist/
+uploads/
+tmp/
 *.log
 .DS_Store
 .env

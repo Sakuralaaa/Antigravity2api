@@ -15,7 +15,7 @@ NC='\033[0m' # No Color
 if [ "$#" -lt 2 ]; then
     echo -e "${RED}错误: 缺少必需参数${NC}"
     echo "使用方法: $0 <SPACE_NAME> <HF_TOKEN>"
-    echo "示例: $0 antigravity-gateway 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"
+    echo "示例: $0 antigravity-gateway hf_xxxxxxxxxxxxxxxxxxxx"
     exit 1
 fi
 

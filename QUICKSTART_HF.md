@@ -6,7 +6,7 @@
 
 - Hugging Face 账号
 - Git 已安装
-- 您的 Hugging Face Token: `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`
+- 您的 Hugging Face Token (格式: `hf_xxxxxxxxxxxxxxxxxxxx`)
 
 ## 三步部署
 
@@ -28,7 +28,7 @@
 
 ```bash
 # 添加 Hugging Face 远程仓库
-git remote add huggingface https://YOUR_USERNAME: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@huggingface.co/spaces/YOUR_USERNAME/antigravity-gateway
+git remote add huggingface https://YOUR_USERNAME:YOUR_HF_TOKEN@huggingface.co/spaces/YOUR_USERNAME/antigravity-gateway
 
 # 推送代码 (替换 YOUR_USERNAME 为您的用户名)
 git push huggingface main
@@ -37,7 +37,7 @@ git push huggingface main
 **或者使用一键部署脚本：**
 
 ```bash
-./deploy_to_huggingface.sh antigravity-gateway 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
+./deploy_to_huggingface.sh antigravity-gateway YOUR_HF_TOKEN
 ```
 
 ### 第 3 步：等待构建

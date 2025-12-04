@@ -9,7 +9,7 @@
 - 访问 [Hugging Face](https://huggingface.co/)
 - 登录或注册账号
 - 在 [Settings > Access Tokens](https://huggingface.co/settings/tokens) 创建一个 **Write** 权限的 Token
-- 您的 Token: `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`
+- 保存您的 Token（格式如：`hf_xxxxxxxxxxxxxxxxxxxx`）
 
 ### 2. 快速部署（推荐）
 
@@ -23,7 +23,7 @@ chmod +x deploy_to_huggingface.sh
 ./deploy_to_huggingface.sh <SPACE_NAME> <HF_TOKEN>
 
 # 示例
-./deploy_to_huggingface.sh antigravity-gateway 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
+./deploy_to_huggingface.sh antigravity-gateway YOUR_HF_TOKEN
 ```
 
 脚本会自动完成以下操作：
@@ -54,7 +54,7 @@ git remote add huggingface https://huggingface.co/spaces/YOUR_USERNAME/SPACE_NAM
 
 # 2. 配置 Git 凭证（使用您的 Token）
 git config credential.helper store
-# 当提示输入密码时，输入您的 Token: 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
+# 当提示输入密码时，输入您的 Hugging Face Token
 
 # 3. 推送代码
 git push huggingface main
@@ -85,7 +85,7 @@ pip install huggingface_hub
 
 # 登录
 huggingface-cli login
-# 输入您的 Token: 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
+# 按提示输入您的 Hugging Face Token
 
 # 创建并上传到 Space
 huggingface-cli repo create SPACE_NAME --type space --space_sdk docker
