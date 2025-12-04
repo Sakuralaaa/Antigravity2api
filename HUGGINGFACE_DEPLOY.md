@@ -11,7 +11,29 @@
 - 在 [Settings > Access Tokens](https://huggingface.co/settings/tokens) 创建一个 **Write** 权限的 Token
 - 您的 Token: `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`
 
-### 2. 创建新的 Space
+### 2. 快速部署（推荐）
+
+使用提供的部署脚本一键部署到 Hugging Face Spaces：
+
+```bash
+# 给脚本添加执行权限
+chmod +x deploy_to_huggingface.sh
+
+# 运行部署脚本
+./deploy_to_huggingface.sh <SPACE_NAME> <HF_TOKEN>
+
+# 示例
+./deploy_to_huggingface.sh antigravity-gateway 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
+```
+
+脚本会自动完成以下操作：
+1. 配置 Hugging Face 远程仓库
+2. 推送代码到 Space
+3. 显示部署后的访问地址
+
+> **注意**: 首次使用需要先在 Hugging Face 创建 Space（见方法一）
+
+### 3. 手动部署方式
 
 #### 方法一：通过 Web 界面创建
 
@@ -24,7 +46,7 @@
    - **Space hardware**: 选择免费的 CPU basic
 4. 点击 "Create Space"
 
-#### 方法二：通过 Git 推送（推荐）
+#### 方法二：通过 Git 推送
 
 ```bash
 # 1. 添加 Hugging Face 作为 remote

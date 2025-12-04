@@ -71,7 +71,19 @@ license: mit
 
 ## 🚀 快速开始
 
-### 环境要求
+### 部署到 Hugging Face Spaces (推荐)
+
+本项目支持一键部署到 Hugging Face Spaces：
+
+```bash
+./deploy_to_huggingface.sh antigravity-gateway YOUR_HF_TOKEN
+```
+
+详细部署指南请查看 [HUGGINGFACE_DEPLOY.md](./HUGGINGFACE_DEPLOY.md)
+
+### 本地部署
+
+#### 环境要求
 - Node.js >= 18.0.0
 
 ### 1. 安装与构建
