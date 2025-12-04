@@ -168,8 +168,7 @@ app.post('/v1/chat/completions', async (req, res) => {
       const cleanup = () => {
         // 连接关闭时的清理工作
         // 每10个请求触发一次GC，避免过于频繁
-        gcCounter++;
-        if (global.gc && gcCounter % 10 === 0) {
+        if (global.gc && ++gcCounter % 10 === 0) {
           global.gc();
           gcCounter = 0;
         }

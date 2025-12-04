@@ -9,12 +9,9 @@ import { createSession, validateSession, destroySession, verifyPassword, adminAu
 import { loadSettings, saveSettings } from './settings_manager.js';
 import tokenManager from '../auth/token_manager.js';
 
-// 配置文件上传 - 限制文件大小防止内存溢出
+// 配置文件上传
 const upload = multer({ 
-  dest: 'uploads/',
-  limits: {
-    fileSize: 10 * 1024 * 1024 // 限制10MB
-  }
+  dest: 'uploads/'
 });
 
 const router = express.Router();

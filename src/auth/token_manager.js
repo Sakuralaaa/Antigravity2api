@@ -41,9 +41,8 @@ class TokenManager {
       const data = fs.readFileSync(this.filePath, 'utf8');
       const tokenArray = JSON.parse(data);
       
-      // 清理旧缓存，避免内存泄漏
-      this.cachedData = null;
-      this.cachedData = tokenArray; // 缓存原始数据
+      // 缓存原始数据
+      this.cachedData = tokenArray;
       
       this.tokens = tokenArray.filter(token => token.enable !== false);
       this.currentIndex = 0;

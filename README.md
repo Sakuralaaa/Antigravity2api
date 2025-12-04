@@ -61,10 +61,18 @@
 
 ## 🚀 快速开始
 
-### 环境要求
+### 一键部署 (推荐)
+
+[![Deploy on Zeabur](https://zeabur.com/button.svg)](https://zeabur.com/templates/ANTIGRAVITY2API)
+
+点击上方按钮即可在 Zeabur 平台一键部署，自动完成构建和配置。
+
+### 本地部署
+
+#### 环境要求
 - Node.js >= 18.0.0
 
-### 1. 安装与构建
+#### 1. 安装与构建
 
 ```bash
 # 安装项目依赖
@@ -74,7 +82,7 @@ npm install
 npm run build
 ```
 
-### 2. 配置服务
+#### 2. 配置服务
 
 编辑根目录下的 `config.json` 文件：
 
@@ -94,7 +102,7 @@ npm run build
 }
 ```
 
-### 3. 添加 Google 账号
+#### 3. 添加 Google 账号
 
 运行 OAuth 登录脚本获取 Access Token：
 
@@ -113,7 +121,7 @@ npm run login
 > - 定期检查 `.gitignore` 文件，确保 `data/` 目录已被排除
 > - 如发现令牌泄露，请立即在 Google 账号设置中撤销相关应用权限
 
-### 4. 启动服务
+#### 4. 启动服务
 
 ```bash
 # 生产模式（已优化内存使用）
