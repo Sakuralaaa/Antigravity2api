@@ -172,9 +172,9 @@ app.post('/v1/chat/completions', async (req, res) => {
       const cleanup = () => {
         // 连接关闭时的清理工作
         // 根据配置的频率触发GC，避免过于频繁
-        if (global.gc && ++globalGcCounter % GC_TRIGGER_FREQUENCY === 0) {
+        globalGcCounter = (globalGcCounter + 1) % GC_TRIGGER_FREQUENCY;
+        if (global.gc && globalGcCounter === 0) {
           global.gc();
-          globalGcCounter = 0;
         }
       };
       

@@ -235,17 +235,20 @@ class TokenManager {
   cleanupOldStats() {
     const now = Date.now();
     const maxAge = 24 * 60 * 60 * 1000; // 24小时
-    let cleaned = 0;
     
+    // 先收集要删除的key，避免在迭代时删除
+    const keysToDelete = [];
     for (const [key, stats] of this.usageStats.entries()) {
       if (stats.lastUsed && (now - stats.lastUsed > maxAge)) {
-        this.usageStats.delete(key);
-        cleaned++;
+        keysToDelete.push(key);
       }
     }
     
-    if (cleaned > 0) {
-      log.info(`🧹 清理了 ${cleaned} 个过期的 Token 使用统计`);
+    // 批量删除
+    keysToDelete.forEach(key => this.usageStats.delete(key));
+    
+    if (keysToDelete.length > 0) {
+      log.info(`🧹 清理了 ${keysToDelete.length} 个过期的 Token 使用统计`);
       if (global.gc) {
         global.gc();
       }

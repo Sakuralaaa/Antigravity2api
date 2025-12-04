@@ -32,9 +32,11 @@ export async function generateAssistantResponse(requestBody, callback) {
   }
 
   const reader = response.body.getReader();
-  const decoder = new TextDecoder();
   let thinkingStarted = false;
   let toolCalls = [];
+  
+  // 在循环外创建decoder，避免重复创建对象
+  const decoder = new TextDecoder();
 
   try {
     while (true) {
