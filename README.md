@@ -22,11 +22,25 @@ license: mit
     <a href="https://github.com/liuw1535/antigravity2api-nodejs">
       <img src="https://img.shields.io/badge/原项目-liuw1535/antigravity2api--nodejs-blue?style=flat-square&logo=github" alt="Original Project" />
     </a>
+    <a href="https://huggingface.co/spaces">
+      <img src="https://img.shields.io/badge/🤗-部署到_Hugging_Face-yellow?style=flat-square" alt="Deploy to Hugging Face" />
+    </a>
+  </p>
+  <p>
+    <a href="./QUICKSTART_HF.md">
+      <strong>📖 5分钟快速部署指南</strong>
+    </a>
+    •
+    <a href="./HUGGINGFACE_DEPLOY.md">
+      <strong>📚 完整部署文档</strong>
+    </a>
   </p>
 </div>
 
 > [!NOTE]
 > 本项目基于 [liuw1535/antigravity2api-nodejs](https://github.com/liuw1535/antigravity2api-nodejs) 进行开发和优化。
+>
+> **🆕 现已支持一键部署到 Hugging Face Spaces！** 查看 [快速入门指南](./QUICKSTART_HF.md)
 
 ---
 

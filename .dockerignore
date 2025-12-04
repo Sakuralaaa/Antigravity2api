@@ -2,13 +2,14 @@ node_modules
 .git
 .github
 .gitignore
-*.md
-!README.md
-data
+data/*.json
 uploads
 tmp
 .env
 .DS_Store
 *.log
+npm-debug.log*
 client/node_modules
 client/dist
+README_ORIGINAL.md
+deploy_to_huggingface.sh

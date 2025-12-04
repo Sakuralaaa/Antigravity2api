@@ -4,28 +4,34 @@ FROM node:18-slim
 # Set working directory
 WORKDIR /app
 
-# Copy package files
+# Copy package files for server
 COPY package*.json ./
 
-# Install dependencies
+# Install server dependencies
 RUN npm install --production
 
-# Copy client package files and install dependencies
-COPY client/package*.json ./client/
-RUN npm install --prefix client
+# Copy client directory
+COPY client ./client
 
-# Copy all source files
-COPY . .
+# Install client dependencies and build frontend
+RUN cd client && npm install && npm run build
 
-# Build the frontend
-RUN npm run build
+# Copy remaining source files
+COPY src ./src
+COPY config.json ./
+COPY public ./public
+COPY scripts ./scripts
+
+# Create necessary directories
+RUN mkdir -p data uploads
 
 # Expose port 7860 (Hugging Face Spaces default)
 EXPOSE 7860
 
-# Set environment variable for port
+# Set environment variables for Hugging Face Spaces
 ENV PORT=7860
 ENV HOST=0.0.0.0
+ENV NODE_ENV=production
 
 # Start the application
 CMD ["npm", "start"]
