@@ -1,3 +1,13 @@
+---
+title: Antigravity Gateway
+emoji: 🚀
+colorFrom: blue
+colorTo: purple
+sdk: docker
+pinned: false
+license: mit
+---
+
 # Antigravity Gateway
 
 <div align="center">
@@ -12,11 +22,25 @@
     <a href="https://github.com/liuw1535/antigravity2api-nodejs">
       <img src="https://img.shields.io/badge/原项目-liuw1535/antigravity2api--nodejs-blue?style=flat-square&logo=github" alt="Original Project" />
     </a>
+    <a href="https://huggingface.co/spaces">
+      <img src="https://img.shields.io/badge/🤗-部署到_Hugging_Face-yellow?style=flat-square" alt="Deploy to Hugging Face" />
+    </a>
+  </p>
+  <p>
+    <a href="./QUICKSTART_HF.md">
+      <strong>📖 5分钟快速部署指南</strong>
+    </a>
+    •
+    <a href="./HUGGINGFACE_DEPLOY.md">
+      <strong>📚 完整部署文档</strong>
+    </a>
   </p>
 </div>
 
 > [!NOTE]
 > 本项目基于 [liuw1535/antigravity2api-nodejs](https://github.com/liuw1535/antigravity2api-nodejs) 进行开发和优化。
+>
+> **🆕 现已支持一键部署到 Hugging Face Spaces！** 查看 [快速入门指南](./QUICKSTART_HF.md)
 
 ---
 
@@ -61,7 +85,19 @@
 
 ## 🚀 快速开始
 
-### 环境要求
+### 部署到 Hugging Face Spaces (推荐)
+
+本项目支持一键部署到 Hugging Face Spaces：
+
+```bash
+./deploy_to_huggingface.sh antigravity-gateway YOUR_HF_TOKEN
+```
+
+详细部署指南请查看 [HUGGINGFACE_DEPLOY.md](./HUGGINGFACE_DEPLOY.md)
+
+### 本地部署
+
+#### 环境要求
 - Node.js >= 18.0.0
 
 ### 1. 安装与构建
