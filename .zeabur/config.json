@@ -1,0 +1,10 @@
+{
+  "build": {
+    "env": [],
+    "buildCommand": "npm install && npm run build"
+  },
+  "deploy": {
+    "env": [],
+    "startCommand": "npm start"
+  }
+}

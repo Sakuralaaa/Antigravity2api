@@ -2,12 +2,12 @@ import fs from 'fs/promises';
 import path from 'path';
 
 const LOGS_FILE = path.join(process.cwd(), 'data', 'app_logs.json');
-const MAX_LOGS = 200; // 最多保存 200 条日志（降低内存使用）
+const MAX_LOGS = 100; // 最多保存 100 条日志（优化内存使用）
 
 // 内存缓存，避免频繁读取文件
 let logsCache = null;
 let lastCacheTime = 0;
-const CACHE_DURATION = 30000; // 缓存30秒
+const CACHE_DURATION = 10000; // 缓存10秒（降低内存占用）
 
 // 确保数据目录存在
 async function ensureDataDir() {

@@ -10,7 +10,9 @@ import { loadSettings, saveSettings } from './settings_manager.js';
 import tokenManager from '../auth/token_manager.js';
 
 // 配置文件上传
-const upload = multer({ dest: 'uploads/' });
+const upload = multer({ 
+  dest: 'uploads/'
+});
 
 const router = express.Router();
 

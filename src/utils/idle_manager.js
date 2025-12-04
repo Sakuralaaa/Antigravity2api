@@ -7,7 +7,8 @@ import logger from './logger.js';
 class IdleManager {
   constructor() {
     this.lastRequestTime = Date.now();
-    this.idleTimeout = 30 * 1000; // 30秒无请求后进入空闲模式（极致优化）
+    // 可通过环境变量调整空闲超时（默认15秒）
+    this.idleTimeout = parseInt(process.env.IDLE_TIMEOUT_MS) || 15 * 1000;
     this.isIdle = false;
     this.gcInterval = null;
     this.checkInterval = null;
@@ -15,13 +16,13 @@ class IdleManager {
     // 启动空闲检查
     this.startIdleCheck();
 
-    // 10秒后立即检查是否应该进入空闲模式
+    // 5秒后立即检查是否应该进入空闲模式
     setTimeout(() => {
       const idleTime = Date.now() - this.lastRequestTime;
       if (idleTime > this.idleTimeout) {
         this.enterIdleMode();
       }
-    }, 10000);
+    }, 5000);
   }
 
   /**
@@ -40,14 +41,14 @@ class IdleManager {
    * 启动空闲检查
    */
   startIdleCheck() {
-    // 每15秒检查一次是否应该进入空闲模式
+    // 每10秒检查一次是否应该进入空闲模式
     this.checkInterval = setInterval(() => {
       const idleTime = Date.now() - this.lastRequestTime;
 
       if (!this.isIdle && idleTime > this.idleTimeout) {
         this.enterIdleMode();
       }
-    }, 15000); // 每15秒检查一次（更频繁）
+    }, 10000); // 每10秒检查一次（更积极的内存管理）
 
     // 不阻止进程退出
     this.checkInterval.unref();
@@ -71,13 +72,14 @@ class IdleManager {
       logger.warn('⚠️  未启用 --expose-gc，建议使用 node --expose-gc 启动以获得更好的内存优化');
     }
 
-    // 在空闲模式下，每2分钟进行一次垃圾回收（更频繁）
+    // 在空闲模式下定期进行垃圾回收（可通过环境变量调整，默认1分钟）
+    const idleGcIntervalMs = parseInt(process.env.IDLE_GC_INTERVAL_MS) || 60 * 1000;
     this.gcInterval = setInterval(() => {
       if (global.gc) {
         global.gc();
         logger.info('🗑️  空闲模式：定期垃圾回收');
       }
-    }, 2 * 60 * 1000); // 每2分钟一次
+    }, idleGcIntervalMs);
 
     // 不阻止进程退出
     this.gcInterval.unref();

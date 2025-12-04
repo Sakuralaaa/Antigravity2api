@@ -129,6 +129,11 @@ app.get('/v1/models', async (req, res) => {
   }
 });
 
+// 全局GC计数器，跨请求共享
+let globalGcCounter = 0;
+// GC触发频率（可通过环境变量配置，默认每10个请求）
+const GC_TRIGGER_FREQUENCY = parseInt(process.env.GC_TRIGGER_FREQUENCY) || 10;
+
 app.post('/v1/chat/completions', async (req, res) => {
   let { messages, model, stream = true, tools, ...params } = req.body;
   try {
@@ -162,6 +167,19 @@ app.post('/v1/chat/completions', async (req, res) => {
       const id = `chatcmpl-${Date.now()}`;
       const created = Math.floor(Date.now() / 1000);
       let hasToolCall = false;
+      
+      // 添加连接关闭监听，确保资源清理
+      const cleanup = () => {
+        // 连接关闭时的清理工作
+        // 根据配置的频率触发GC，避免过于频繁
+        globalGcCounter = (globalGcCounter + 1) % GC_TRIGGER_FREQUENCY;
+        if (global.gc && globalGcCounter === 0) {
+          global.gc();
+        }
+      };
+      
+      req.on('close', cleanup);
+      req.on('error', cleanup);
 
       await generateAssistantResponse(requestBody, (data) => {
         if (data.type === 'tool_calls') {
@@ -276,11 +294,15 @@ server.on('error', (error) => {
   }
 });
 
-const shutdown = () => {
+const shutdown = async () => {
   logger.info('正在关闭服务器...');
 
   // 清理空闲管理器
   idleManager.destroy();
+  
+  // 清理token管理器
+  const tokenManagerModule = await import('../auth/token_manager.js');
+  tokenManagerModule.default.destroy();
 
   server.close(() => {
     logger.info('服务器已关闭');

@@ -61,10 +61,18 @@
 
 ## 🚀 快速开始
 
-### 环境要求
+### 一键部署 (推荐)
+
+[![Deploy on Zeabur](https://zeabur.com/button.svg)](https://zeabur.com/templates/ANTIGRAVITY2API)
+
+点击上方按钮即可在 Zeabur 平台一键部署，自动完成构建和配置。
+
+### 本地部署
+
+#### 环境要求
 - Node.js >= 18.0.0
 
-### 1. 安装与构建
+#### 1. 安装与构建
 
 ```bash
 # 安装项目依赖
@@ -74,7 +82,7 @@ npm install
 npm run build
 ```
 
-### 2. 配置服务
+#### 2. 配置服务
 
 编辑根目录下的 `config.json` 文件：
 
@@ -94,7 +102,7 @@ npm run build
 }
 ```
 
-### 3. 添加 Google 账号
+#### 3. 添加 Google 账号
 
 运行 OAuth 登录脚本获取 Access Token：
 
@@ -113,10 +121,10 @@ npm run login
 > - 定期检查 `.gitignore` 文件，确保 `data/` 目录已被排除
 > - 如发现令牌泄露，请立即在 Google 账号设置中撤销相关应用权限
 
-### 4. 启动服务
+#### 4. 启动服务
 
 ```bash
-# 生产模式
+# 生产模式（已优化内存使用）
 npm start
 
 # 开发模式 (支持热重载)
@@ -124,6 +132,13 @@ npm run dev
 ```
 
 服务启动后，访问 `http://localhost:8045` 进入管理后台。
+
+> [!NOTE]
+> **内存优化说明**
+> - 服务已配置 `--max-old-space-size=512` 限制最大内存使用为512MB
+> - 启用 `--expose-gc` 允许主动触发垃圾回收
+> - 空闲15秒后自动进入低功耗模式，释放内存
+> - 如需调整内存限制，可修改 `package.json` 中的启动参数
 
 > [!TIP]
 > **首次登录提示**

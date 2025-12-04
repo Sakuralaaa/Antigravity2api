@@ -19,6 +19,19 @@ class TokenManager {
     this.cachedData = null; // 缓存文件数据，减少磁盘读取
     this.usageStats = new Map(); // Token 使用统计 { refresh_token -> { requests, lastUsed } }
     this.loadTokens();
+    
+    // 定期清理旧的使用统计，防止内存无限增长
+    // 可通过环境变量调整清理间隔（默认10分钟）
+    const cleanupIntervalMs = parseInt(process.env.TOKEN_CLEANUP_INTERVAL_MS) || 10 * 60 * 1000;
+    this.cleanupInterval = setInterval(() => {
+      try {
+        this.cleanupOldStats();
+      } catch (error) {
+        log.error('清理 Token 统计失败:', error.message);
+      }
+    }, cleanupIntervalMs);
+    
+    this.cleanupInterval.unref(); // 不阻止进程退出
   }
 
   loadTokens() {
@@ -31,7 +44,10 @@ class TokenManager {
       log.info('正在加载token...');
       const data = fs.readFileSync(this.filePath, 'utf8');
       const tokenArray = JSON.parse(data);
-      this.cachedData = tokenArray; // 缓存原始数据
+      
+      // 缓存原始数据
+      this.cachedData = tokenArray;
+      
       this.tokens = tokenArray.filter(token => token.enable !== false);
       this.currentIndex = 0;
       this.lastLoadTime = Date.now();
@@ -213,6 +229,37 @@ class TokenManager {
       return await this.getToken();
     }
     return null;
+  }
+  
+  // 清理超过24小时未使用的统计数据
+  cleanupOldStats() {
+    const now = Date.now();
+    const maxAge = 24 * 60 * 60 * 1000; // 24小时
+    
+    // 先收集要删除的key，避免在迭代时删除
+    const keysToDelete = [];
+    for (const [key, stats] of this.usageStats.entries()) {
+      if (stats.lastUsed && (now - stats.lastUsed > maxAge)) {
+        keysToDelete.push(key);
+      }
+    }
+    
+    // 批量删除
+    keysToDelete.forEach(key => this.usageStats.delete(key));
+    
+    if (keysToDelete.length > 0) {
+      log.info(`🧹 清理了 ${keysToDelete.length} 个过期的 Token 使用统计`);
+      if (global.gc) {
+        global.gc();
+      }
+    }
+  }
+  
+  // 清理资源
+  destroy() {
+    if (this.cleanupInterval) {
+      clearInterval(this.cleanupInterval);
+    }
   }
 }
 const tokenManager = new TokenManager();
