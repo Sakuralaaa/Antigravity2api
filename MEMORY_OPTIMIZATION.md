@@ -163,6 +163,12 @@ export IDLE_GC_INTERVAL_MS=120000
 # Token统计清理间隔（默认600000ms = 10分钟）
 export TOKEN_CLEANUP_INTERVAL_MS=300000
 
+# GC触发频率（默认10，即每10个请求触发一次）
+export GC_TRIGGER_FREQUENCY=20
+
+# 内存阈值百分比（默认0.8，即80%）
+export MEMORY_THRESHOLD_PERCENTAGE=0.85
+
 # 启动服务
 npm start
 ```
@@ -170,6 +176,11 @@ npm start
 示例：放宽空闲限制
 ```bash
 IDLE_TIMEOUT_MS=30000 IDLE_GC_INTERVAL_MS=120000 npm start
+```
+
+示例：降低GC频率提升性能
+```bash
+GC_TRIGGER_FREQUENCY=20 MEMORY_THRESHOLD_PERCENTAGE=0.85 npm start
 ```
 
 ## 监控内存使用

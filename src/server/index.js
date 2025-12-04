@@ -131,6 +131,8 @@ app.get('/v1/models', async (req, res) => {
 
 // 全局GC计数器，跨请求共享
 let globalGcCounter = 0;
+// GC触发频率（可通过环境变量配置，默认每10个请求）
+const GC_TRIGGER_FREQUENCY = parseInt(process.env.GC_TRIGGER_FREQUENCY) || 10;
 
 app.post('/v1/chat/completions', async (req, res) => {
   let { messages, model, stream = true, tools, ...params } = req.body;
@@ -169,8 +171,8 @@ app.post('/v1/chat/completions', async (req, res) => {
       // 添加连接关闭监听，确保资源清理
       const cleanup = () => {
         // 连接关闭时的清理工作
-        // 每10个请求触发一次GC，避免过于频繁
-        if (global.gc && ++globalGcCounter % 10 === 0) {
+        // 根据配置的频率触发GC，避免过于频繁
+        if (global.gc && ++globalGcCounter % GC_TRIGGER_FREQUENCY === 0) {
           global.gc();
           globalGcCounter = 0;
         }

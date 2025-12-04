@@ -17,8 +17,8 @@ const memoryCheckInterval = setInterval(() => {
   
   logger.info(`📊 内存使用: ${heapUsedMB}MB / ${heapTotalMB}MB`);
   
-  // 如果堆内存使用超过总量的80%，主动触发GC
-  const MEMORY_THRESHOLD_PERCENTAGE = 0.8;
+  // 如果堆内存使用超过阈值，主动触发GC（可通过环境变量配置，默认80%）
+  const MEMORY_THRESHOLD_PERCENTAGE = parseFloat(process.env.MEMORY_THRESHOLD_PERCENTAGE) || 0.8;
   const usagePercentage = heapUsedMB / heapTotalMB;
   if (usagePercentage > MEMORY_THRESHOLD_PERCENTAGE && global.gc) {
     logger.warn(`⚠️  内存使用较高 (${Math.round(usagePercentage * 100)}% - ${heapUsedMB}MB / ${heapTotalMB}MB)，触发垃圾回收`);

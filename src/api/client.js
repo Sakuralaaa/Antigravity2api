@@ -104,8 +104,12 @@ export async function generateAssistantResponse(requestBody, callback) {
       }
     }
   } finally {
-    // 确保reader被释放
-    reader.releaseLock();
+    // 确保reader被释放（带错误处理）
+    try {
+      reader.releaseLock();
+    } catch (e) {
+      // reader可能已经被释放，忽略错误
+    }
   }
 }
 
