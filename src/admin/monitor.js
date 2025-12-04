@@ -19,9 +19,9 @@ const memoryCheckInterval = setInterval(() => {
   
   // 如果堆内存使用超过总量的80%，主动触发GC
   const MEMORY_THRESHOLD_PERCENTAGE = 0.8;
-  const threshold = heapTotalMB * MEMORY_THRESHOLD_PERCENTAGE;
-  if (heapUsedMB > threshold && global.gc) {
-    logger.warn(`⚠️  内存使用较高 (${heapUsedMB}MB / ${heapTotalMB}MB)，触发垃圾回收`);
+  const usagePercentage = heapUsedMB / heapTotalMB;
+  if (usagePercentage > MEMORY_THRESHOLD_PERCENTAGE && global.gc) {
+    logger.warn(`⚠️  内存使用较高 (${Math.round(usagePercentage * 100)}% - ${heapUsedMB}MB / ${heapTotalMB}MB)，触发垃圾回收`);
     global.gc();
   }
 }, 30 * 60 * 1000); // 每30分钟

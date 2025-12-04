@@ -24,7 +24,11 @@ class TokenManager {
     // 可通过环境变量调整清理间隔（默认10分钟）
     const cleanupIntervalMs = parseInt(process.env.TOKEN_CLEANUP_INTERVAL_MS) || 10 * 60 * 1000;
     this.cleanupInterval = setInterval(() => {
-      this.cleanupOldStats();
+      try {
+        this.cleanupOldStats();
+      } catch (error) {
+        log.error('清理 Token 统计失败:', error.message);
+      }
     }, cleanupIntervalMs);
     
     this.cleanupInterval.unref(); // 不阻止进程退出

@@ -129,6 +129,9 @@ app.get('/v1/models', async (req, res) => {
   }
 });
 
+// 全局GC计数器，跨请求共享
+let globalGcCounter = 0;
+
 app.post('/v1/chat/completions', async (req, res) => {
   let { messages, model, stream = true, tools, ...params } = req.body;
   try {
@@ -164,13 +167,12 @@ app.post('/v1/chat/completions', async (req, res) => {
       let hasToolCall = false;
       
       // 添加连接关闭监听，确保资源清理
-      let gcCounter = 0;
       const cleanup = () => {
         // 连接关闭时的清理工作
         // 每10个请求触发一次GC，避免过于频繁
-        if (global.gc && ++gcCounter % 10 === 0) {
+        if (global.gc && ++globalGcCounter % 10 === 0) {
           global.gc();
-          gcCounter = 0;
+          globalGcCounter = 0;
         }
       };
       
