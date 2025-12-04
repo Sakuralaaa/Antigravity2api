@@ -7,7 +7,8 @@ import logger from './logger.js';
 class IdleManager {
   constructor() {
     this.lastRequestTime = Date.now();
-    this.idleTimeout = 15 * 1000; // 15秒无请求后进入空闲模式（加快内存释放）
+    // 可通过环境变量调整空闲超时（默认15秒）
+    this.idleTimeout = parseInt(process.env.IDLE_TIMEOUT_MS) || 15 * 1000;
     this.isIdle = false;
     this.gcInterval = null;
     this.checkInterval = null;
@@ -71,13 +72,14 @@ class IdleManager {
       logger.warn('⚠️  未启用 --expose-gc，建议使用 node --expose-gc 启动以获得更好的内存优化');
     }
 
-    // 在空闲模式下，每1分钟进行一次垃圾回收（更积极释放内存）
+    // 在空闲模式下定期进行垃圾回收（可通过环境变量调整，默认1分钟）
+    const idleGcIntervalMs = parseInt(process.env.IDLE_GC_INTERVAL_MS) || 60 * 1000;
     this.gcInterval = setInterval(() => {
       if (global.gc) {
         global.gc();
         logger.info('🗑️  空闲模式：定期垃圾回收');
       }
-    }, 60 * 1000); // 每1分钟一次
+    }, idleGcIntervalMs);
 
     // 不阻止进程退出
     this.gcInterval.unref();

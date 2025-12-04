@@ -164,11 +164,14 @@ app.post('/v1/chat/completions', async (req, res) => {
       let hasToolCall = false;
       
       // 添加连接关闭监听，确保资源清理
+      let gcCounter = 0;
       const cleanup = () => {
         // 连接关闭时的清理工作
-        if (global.gc && Math.random() < 0.1) {
-          // 10%概率触发GC，避免过于频繁
+        // 每10个请求触发一次GC，避免过于频繁
+        gcCounter++;
+        if (global.gc && gcCounter % 10 === 0) {
           global.gc();
+          gcCounter = 0;
         }
       };
       

@@ -149,6 +149,29 @@ node --expose-gc --max-old-space-size=512 src/server/index.js
 node --expose-gc --max-old-space-size=1024 src/server/index.js
 ```
 
+## 环境变量配置
+
+可通过环境变量进一步调整内存优化参数：
+
+```bash
+# 空闲超时（默认15000ms = 15秒）
+export IDLE_TIMEOUT_MS=20000
+
+# 空闲模式GC间隔（默认60000ms = 1分钟）
+export IDLE_GC_INTERVAL_MS=120000
+
+# Token统计清理间隔（默认600000ms = 10分钟）
+export TOKEN_CLEANUP_INTERVAL_MS=300000
+
+# 启动服务
+npm start
+```
+
+示例：放宽空闲限制
+```bash
+IDLE_TIMEOUT_MS=30000 IDLE_GC_INTERVAL_MS=120000 npm start
+```
+
 ## 监控内存使用
 
 访问管理后台的"系统监控"页面，可以实时查看：

@@ -21,9 +21,11 @@ class TokenManager {
     this.loadTokens();
     
     // 定期清理旧的使用统计，防止内存无限增长
+    // 可通过环境变量调整清理间隔（默认10分钟）
+    const cleanupIntervalMs = parseInt(process.env.TOKEN_CLEANUP_INTERVAL_MS) || 10 * 60 * 1000;
     this.cleanupInterval = setInterval(() => {
       this.cleanupOldStats();
-    }, 10 * 60 * 1000); // 每10分钟清理一次
+    }, cleanupIntervalMs);
     
     this.cleanupInterval.unref(); // 不阻止进程退出
   }
