@@ -1,3 +1,13 @@
+---
+title: Antigravity Gateway
+emoji: 🚀
+colorFrom: blue
+colorTo: purple
+sdk: docker
+pinned: false
+license: mit
+---
+
 # Antigravity Gateway
 
 <div align="center">

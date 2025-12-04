@@ -41,4 +41,12 @@ export function reloadConfig() {
 // 初始化加载
 reloadConfig();
 
+// 支持环境变量覆盖端口和主机配置 (用于 Hugging Face Spaces 等平台)
+if (process.env.PORT) {
+  config.server.port = parseInt(process.env.PORT, 10);
+}
+if (process.env.HOST) {
+  config.server.host = process.env.HOST;
+}
+
 export default config;
